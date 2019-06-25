@@ -1,22 +1,26 @@
 import * as express from 'express';
-import * as mongoose  from 'mongoose';
 import { credentials } from './core/config/enviroment';
+import { MongoClient } from 'mongodb';
+import * as assert from 'assert';
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-const apiUrl = `mongodb://${credentials.username}:${credentials.password}mongodb://<dbuser>:<dbpassword>@ds243607.mlab.com:43607/cubo-api`;
+const apiUrl = `mongodb://${credentials.username}:${credentials.password}@ds243607.mlab.com:43607/cubo-api`;
+const dbName = 'cubo-api';
 
-mongoose.connect(apiUrl, {
-    useNewUrlParser: true
-}).then(() => {
-    console.log('Mongo successful launch at ' + new Date());
-}).catch((err) => {
-    console.log(err + new Date());
-})
+MongoClient.connect(apiUrl, { useNewUrlParser: true }, (err, client) => {
+    console.log('Connected successfully to server at ' + new Date());
+    const db = client.db(dbName);
+    client.close();
+});
 
 app.get('/', (req, res) => {
     res.send('ta funfando /o/');
+});
+
+app.get('/users', (req, res) => {
+    
 });
 
 app.listen(port, () => {
