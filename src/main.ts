@@ -6,7 +6,6 @@ import * as cors from 'cors';
 
 async function run() {
     const app = express();
-    app.use(cors());    
     const port = process.env.PORT || 8080;
 
     const apiUrl = `mongodb://${credentials.username}:${credentials.password}@ds243607.mlab.com:43607/cubo-api`;
@@ -15,8 +14,10 @@ async function run() {
     const client = await MongoClient.connect(apiUrl, { useNewUrlParser: true });
     const db = client.db(dbName);
 
+    app.use(cors());    
+
     app.get('/', (req, res) => {
-        res.send('ta funfando /o/');
+        res.send('🔥');
     });
 
     app.get('/users', async (req, res) => {
@@ -31,12 +32,15 @@ async function run() {
     });
 
     app.post('/users', async (req, res) => {
-        let userJson = req.params.user;
-
         try{
-            let user: User = Object.assign(new User(), userJson);
-            let response = await db.collection('users').insert(user);
+            let userJson = {
+                firstName: req.query.firstName,
+                lastName: req.query.lastName,
+                participation: req.query.participation
+            }
 
+            let user: User = Object.assign(new User(), userJson);
+            let response = await db.collection('users').insertOne(user);
             res.json(response);
         }catch(err) {
             res.status(404);
@@ -51,4 +55,4 @@ async function run() {
 
 };
 
-run(); // 🔥 
+run();
