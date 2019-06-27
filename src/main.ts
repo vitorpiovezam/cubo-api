@@ -2,10 +2,12 @@ import * as express from 'express';
 import { credentials } from './core/config/enviroment';
 import { MongoClient } from 'mongodb';
 import { User } from './core/models/user.model';
+import * as cors from 'cors';
 
 async function run() {
     const app = express();
-    const port = process.env.PORT || 8000;
+    app.use(cors());    
+    const port = process.env.PORT || 8080;
 
     const apiUrl = `mongodb://${credentials.username}:${credentials.password}@ds243607.mlab.com:43607/cubo-api`;
     const dbName = 'cubo-api';
