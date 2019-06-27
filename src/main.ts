@@ -1,7 +1,6 @@
 import * as express from 'express';
 import { credentials } from './core/config/enviroment';
 import { MongoClient } from 'mongodb';
-import * as assert from 'assert';
 import { User } from './core/models/user.model';
 
 async function run() {
@@ -20,7 +19,6 @@ async function run() {
 
     app.get('/users', async (req, res) => {
         let response: User[] = [];
-
         const cursor = await db.collection('users').find();
         
         await cursor.forEach(user => {
@@ -30,8 +28,19 @@ async function run() {
         res.json(response);
     });
 
-    app.post('/users', (req, res) => {
-       
+    app.post('/users', async (req, res) => {
+        let userJson = req.params.user;
+
+        try{
+            let user: User = Object.assign(new User(), userJson);
+            let response = await db.collection('users').insert(user);
+
+            res.json(response);
+        }catch(err) {
+            res.status(404);
+        }
+        
+
     });
 
     app.listen(port, () => {
@@ -40,4 +49,4 @@ async function run() {
 
 };
 
-run();
+run(); // 🔥 
