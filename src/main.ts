@@ -42,8 +42,9 @@ async function run() {
             }
 
             let user: User = Object.assign(new User(), userJson);
-            let response = await db.collection('users').insertOne(user);
-            res.json(response);
+            
+            let result = await db.collection('users').insertOne(user);
+            res.json(result);
         }catch(err) {
             res.status(404);
         }
