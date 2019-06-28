@@ -35,16 +35,23 @@ async function run() {
 
     app.post('/users', async (req, res) => {
         try{
+            let response = [];
+
             let userJson = {
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 participation: req.body.participation
             }
 
-            let user: User = Object.assign(new User(), userJson);
-            
-            let result = await db.collection('users').insertOne(user);
-            res.json(result);
+            let result = await db.collection('users').insertOne(Object.assign(new User(), userJson));
+
+            let insertedRegistry = await db.collection('users').find({ _id: result.insertedId });
+
+            await insertedRegistry.forEach(user => {
+                response.push(Object.assign(new User(), user));
+            });
+
+            res.json(response);
         }catch(err) {
             res.status(404);
         }
