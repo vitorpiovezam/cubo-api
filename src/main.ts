@@ -3,6 +3,7 @@ import { credentials } from './core/config/enviroment';
 import { MongoClient } from 'mongodb';
 import { User } from './core/models/user.model';
 import * as cors from 'cors';
+import * as bodyParser from 'body-parser';
 
 async function run() {
     const app = express();
@@ -15,6 +16,7 @@ async function run() {
     const db = client.db(dbName);
 
     app.use(cors());    
+    app.use(bodyParser.json());
 
     app.get('/', (req, res) => {
         res.send('🔥');
@@ -34,9 +36,9 @@ async function run() {
     app.post('/users', async (req, res) => {
         try{
             let userJson = {
-                firstName: req.query.firstName,
-                lastName: req.query.lastName,
-                participation: req.query.participation
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                participation: req.body.participation
             }
 
             let user: User = Object.assign(new User(), userJson);
